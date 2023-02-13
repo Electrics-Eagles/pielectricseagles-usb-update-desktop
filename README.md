@@ -45,11 +45,17 @@ Example of usage
 ```
 
 ``` drone_image_generator ``` is a binary file that will run this CLI application
+
 ```--files-to-install= ``` is a source file path from PC that it will install in Raspberry Pi Zero 
+
 ```--install-path=``` is a destination file path installation in Raspberry Pi Zero 
+
 ```--post-update-script-content-file=``` is a script after installation file in Raspberry Pi Zero
+
 ```--pre-update-script-content-file=``` is a script before installation file Raspberry Pi Zero
+
 ```--drive=``` is a path of USB drive that will make a image to specific USB drive
+
 ```--password=``` is a password installation zip file for identity device and vendor
 
 ## Troubleshooting
