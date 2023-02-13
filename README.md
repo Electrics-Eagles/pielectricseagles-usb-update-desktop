@@ -61,3 +61,15 @@ Example of usage
 ## Troubleshooting
 
 If you got error about file and directory paths, please check carefully that files are existed. (Will show RUST panic inforamtion after early ternimate this tool) 
+
+## Build 
+
+You need to download this repository firstly 
+
+You have already Rust tools before building and run a command below in path of this downloaded repository
+
+```cargo build```
+
+## Imporatant note:
+
+This CLI application doesn't support microsoft operating system and only Linux operating system is working. 
