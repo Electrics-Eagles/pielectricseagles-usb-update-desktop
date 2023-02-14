@@ -21,7 +21,7 @@ use std::process::Command;
 /// ```
 pub fn compress_file_with_password(forder_path_input: &str, compressed_forder_path: &str, password: &str) -> i8
 {
-    let mut cmd =Command::new("xcompress"); // Build command for compression 7z file with password
+    let mut cmd =Command::new("7z"); // Build command for compression 7z file with password
     cmd.arg("a");
     cmd.arg("-p");
     cmd.arg(password);
