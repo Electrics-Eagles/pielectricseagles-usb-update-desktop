@@ -23,10 +23,10 @@ pub fn compress_file_with_password(forder_path_input: &str, compressed_forder_pa
 {
     let mut cmd =Command::new("7z"); // Build command for compression 7z file with password
     cmd.arg("a");
-    cmd.arg("-p");
-    cmd.arg(password);
+    cmd.arg("-p".to_owned()+password);
+    //cmd.arg();
     cmd.arg(forder_path_input);
-    cmd.arg("-o");
+    cmd.arg(" ");
     cmd.arg(compressed_forder_path);
 
     let return_val = match cmd.output() // Check status of making archive 7z zip with nofication in console
