@@ -1,0 +1,44 @@
+on:
+  push:
+
+name: ARM build
+
+jobs:
+  linux_arm7:
+    name: Linux ARM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: arm-unknown-linux-musleabi
+          override: true
+      - name: Build the project
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --target stable-x86_64-unknown-linux-gnu --release
+      - name: Upload the binary artifact
+        uses: actions/upload-artifact@v2
+        with:
+            name: pielectricseagles-usb-update-rpi binary
+            path: ./target/arm-unknown-linux-musleabi/release/pielectricseagles-usb-update-rpi
+
+  rebuild_docs:
+    name: Rebuild and publish docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Rebuild docs
+        run: |
+          cargo doc --no-deps
+      - name: Deploy docs to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/doc
