@@ -1,5 +1,6 @@
 use std::process::Command;
 /// # Description
+/// todo: xcompress ->  7z x -p aaa
 /// Compress 7z forder with password protected from our forder with files. When you use this function. You need to install package xcompress before usage. 
 /// You could find about xcompress in https://github.com/magiclen/xcompress . 
 ///
@@ -38,4 +39,4 @@ pub fn compress_file_with_password(forder_path_input: &str, compressed_forder_pa
     return_val
 }
 
-/// todo: xcompress ->  7z x -p aaa
+
