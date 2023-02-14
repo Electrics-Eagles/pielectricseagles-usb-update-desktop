@@ -1,44 +1,66 @@
+name: Build and Release Rust App
+
 on:
   push:
-
-name: ARM build
+    branches:
+      - main
+  pull_request:
 
 jobs:
-  linux_arm7:
-    name: Linux ARM
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: arm-unknown-linux-musleabi
-          override: true
-      - name: Build the project
-        uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --target stable-x86_64-unknown-linux-gnu --release
-      - name: Upload the binary artifact
-        uses: actions/upload-artifact@v2
-        with:
-            name: pielectricseagles-usb-update-rpi binary
-            path: ./target/arm-unknown-linux-musleabi/release/pielectricseagles-usb-update-rpi
+  build:
 
-  rebuild_docs:
-    name: Rebuild and publish docs
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Rebuild docs
-        run: |
-          cargo doc --no-deps
-      - name: Deploy docs to Github Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/doc
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Build and test
+      run: |
+        cargo build --release
+        cargo test
+
+    - name: Build Docs
+      run: cargo doc --no-deps
+
+    - name: Deploy Docs to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        personal_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./target/doc
+        cname: mycustomdomain.com # Optional custom domain
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
+        body: |
+          Changes in this Release:
+          nigthly build ${{ github.run_number }}
+          See docs for changes
+          - [View Docs](https://<username>.github.io/<repository>)
+        draft: false
+        prerelease: false
+
+    - name: Attach Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./target/release/myapp
+        asset_name: myapp-${{ matrix.os }}-${{ github.run_number }}.exe
+        asset_content_type: application/octet-stream
