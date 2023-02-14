@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["drone_image_generator"];
+window.ALL_CRATES = ["pielectricseagles_usb_update_desktop"];
