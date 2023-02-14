@@ -8,58 +8,56 @@ on:
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        extension: ["",".exe"]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
 
-    - name: Build and test
-      run: |
-        cargo build --release
+      - name: Build and test
+        run: |
+          cargo build --release
 
-    - name: Build Docs
-      run: cargo doc --no-deps
+      - name: Build Docs
+        run: cargo doc --no-deps
 
-    - name: Deploy Docs to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        personal_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./target/doc
+      - name: Deploy Docs to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/doc
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v1.0.0.${{ github.run_number }}
-        release_name: Release ${{ github.run_number }}
-        body: |
-          Changes in this Release:
-          nigthly build v1.0.0.${{ github.run_number }}
-          See docs for changes
-          - [View Docs](https://electrics-eagles.github.io/pielectricseagles-usb-update-desktop/pielectricseagles_usb_update_desktop/index.html)
-        draft: false
-        prerelease: true
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0.0.${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          body: |
+            Changes in this Release:
+            nightly build v1.0.0.${{ github.run_number }}
+            See docs for changes
+            - [View Docs](https://electrics-eagles.github.io/pielectricseagles-usb-update-desktop/pielectricseagles_usb_update_desktop/index.html)
+          draft: false
+          prerelease: true
 
-    - name: Attach Binary
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/release/pielectricseagles-usb-update-desktop
-        asset_name: pielectricseagles-usb-update-desktop-nigtly-v1.0.0.${{ matrix.os }}-${{ github.run_number }}{{matrix.extension}}
-        asset_content_type: application/octet-stream
+      - name: Attach Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/release/pielectricseagles-usb-update-desktop
+          asset_name: pielectricseagles-usb-update-desktop-nightly-v1.0.0.${{ github.run_number }}-${{ matrix.os }}
+          asset_content_type: application/octet-stream
