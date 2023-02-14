@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+        extension: ["",".exe"]
 
     steps:
     - name: Checkout code
@@ -49,7 +50,7 @@ jobs:
           Changes in this Release:
           nigthly build v1.0.0.${{ github.run_number }}
           See docs for changes
-          - [View Docs](https://<username>.github.io/<repository>)
+          - [View Docs](https://electrics-eagles.github.io/pielectricseagles-usb-update-desktop/pielectricseagles_usb_update_desktop/index.html)
         draft: false
         prerelease: true
 
@@ -60,5 +61,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./target/release/pielectricseagles-usb-update-desktop
-        asset_name: pielectricseagles-usb-update-desktop-nigtly-v1.0.0.${{ matrix.os }}-${{ github.run_number }}.exe
+        asset_name: pielectricseagles-usb-update-desktop-nigtly-v1.0.0.${{ matrix.os }}-${{ github.run_number }}{{matrix.extension}}
         asset_content_type: application/octet-stream
