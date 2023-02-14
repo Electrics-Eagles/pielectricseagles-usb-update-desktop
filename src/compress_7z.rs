@@ -37,3 +37,5 @@ pub fn compress_file_with_password(forder_path_input: &str, compressed_forder_pa
     // Return value
     return_val
 }
+
+/// todo: xcompress ->  7z x -p aaa
