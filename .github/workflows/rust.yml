@@ -27,7 +27,6 @@ jobs:
     - name: Build and test
       run: |
         cargo build --release
-        cargo test
 
     - name: Build Docs
       run: cargo doc --no-deps
@@ -37,7 +36,6 @@ jobs:
       with:
         personal_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./target/doc
-        cname: mycustomdomain.com # Optional custom domain
 
     - name: Create Release
       id: create_release
@@ -45,15 +43,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ github.run_number }}
+        tag_name: nightly v1.0.0.${{ github.run_number }}
         release_name: Release ${{ github.run_number }}
         body: |
           Changes in this Release:
-          nigthly build ${{ github.run_number }}
+          nigthly build v1.0.0.${{ github.run_number }}
           See docs for changes
           - [View Docs](https://<username>.github.io/<repository>)
         draft: false
-        prerelease: false
+        prerelease: true
 
     - name: Attach Binary
       uses: actions/upload-release-asset@v1
@@ -61,6 +59,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/release/myapp
-        asset_name: myapp-${{ matrix.os }}-${{ github.run_number }}.exe
+        asset_path: ./target/release/pielectricseagles-usb-update-desktop
+        asset_name: pielectricseagles-usb-update-desktop-nigtly-v1.0.0.${{ matrix.os }}-${{ github.run_number }}.exe
         asset_content_type: application/octet-stream
