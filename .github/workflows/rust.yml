@@ -58,6 +58,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/release/pielectricseagles-usb-update-desktop
-          asset_name: pielectricseagles-usb-update-desktop-nightly-v1.0.0.${{ github.run_number }}-${{ matrix.os }}
+          asset_path: ./target/release/pielectricseagles-usb-update-desktop${{ matrix.extension }}
+          asset_name: pielectricseagles-usb-update-desktop-nightly-v1.0.0.${{ github.run_number }}-${{ matrix.os }}${{ matrix.extension }}
           asset_content_type: application/octet-stream
