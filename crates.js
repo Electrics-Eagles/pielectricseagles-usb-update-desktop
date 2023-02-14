@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["drone_image_generator"];

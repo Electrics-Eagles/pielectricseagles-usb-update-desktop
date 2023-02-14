@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["main","Main code"]],"mod":[["compress_7z",""],["readfiles",""]],"struct":[["Args","A struct that can receive data from command line interface"],["Root","A struct that retrieve main body of JSON file"],["Update","Strcut of update body of JSON file (for update.json)"],["UpdateStart","Struct of update body of JSON file (for start_update.json)"]]};
