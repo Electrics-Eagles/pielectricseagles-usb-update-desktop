@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["write_general_json_about_zip_file",""]],"struct":[["Root",""],["UpdateStart","Struct of update body of JSON file (for start_update.json)"]]};

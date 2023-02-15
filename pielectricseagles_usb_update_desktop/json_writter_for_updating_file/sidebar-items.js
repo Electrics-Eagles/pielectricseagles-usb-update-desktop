@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Root","A struct that retrieve main body of JSON file"],["Update","Strcut of update body of JSON file (for update.json)"]]};
