@@ -1,8 +1,10 @@
 mod readfiles;
 mod compress_7z; 
-
+mod json_writter_for_extraction_compress_folder;
+mod json_writter_for_updating_file;
+use json_writter_for_extraction_compress_folder::*;
+use json_writter_for_updating_file::*;
 use std::{path::Path, borrow::Borrow};
-use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::prelude::*;
 use clap::Parser;
@@ -38,58 +40,6 @@ struct Args {
 
     #[arg(long = "password", default_value = "12994393")]
     password: String,
-}
-
-/// A struct that retrieve main body of JSON file
-///
-/// # Fields
-/// 
-/// * `Vec<Update>` - The list of update sub-scripts
-/// 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Root {
-    pub update: Vec<Update>,
-}
-/// Strcut of update body of JSON file (for update.json)
-///
-/// # Fields
-/// 
-/// * `location_file` - the filename to install
-/// * `checksum` - the checksum of file
-/// * `version` - version of file
-/// * `install_path` - a directory path to install file in RPI Zero 
-/// 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Update {
-    #[serde(rename = "location_file")]
-    pub location_file: String,
-    pub checksum: String,
-    pub version: String,
-    #[serde(rename = "install_path")]
-    pub install_path: String,
-}
-
-/// Struct of update body of JSON file (for start_update.json)
-///
-/// # Fields
-/// 
-/// * `file_name` - the filename of 7z file
-/// * `checksum` - the checksum of 7z file
-/// * `verdor_id` - the first of four character password (for example 12345678 is given password. 1234 is verdor_id)
-/// * `product_id` - the fitth of four character password  (for example 12345678 is given password. 5678 is product_id)
-/// 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct UpdateStart {
-    #[serde(rename = "file_name")]
-    pub file_name: String,
-    pub checksum: String,
-    #[serde(rename = "vendor_id")]
-    pub vendor_id: String,
-    #[serde(rename = "product_id")]
-    pub product_id: String,
 }
 
 /// Main code
@@ -169,9 +119,8 @@ fn main() {
     };
     
     /* Write json file start_update.json */
-    let mut json_start_update_file = File::create("start_update.json").unwrap();
-    json_start_update_file.write_all(serde_json::to_string_pretty(&_start_to_update_data).unwrap().as_bytes()).unwrap();
-
+    write_general_json_about_zip_file(String::from("start_update.json"), _start_to_update_data);
+    
     /* Copy to USB - drive */
     let mut destination_path_to_paste_with_compressed_file: String = args.drive.clone();
     destination_path_to_paste_with_compressed_file.push_str("/encrypted_update.7z");
