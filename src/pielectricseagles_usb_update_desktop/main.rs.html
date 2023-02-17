@@ -135,6 +135,24 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
 </pre><pre class="rust"><code><span class="kw">mod </span>readfiles;
 <span class="kw">mod </span>compress_7z; 
 <span class="kw">mod </span>json_writter_for_extraction_compress_folder;
@@ -145,7 +163,6 @@
 <span class="kw">use </span>std::fs::File;
 <span class="kw">use </span>std::io::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>clap::Parser;
-<span class="kw">use </span>substring::Substring;
 <span class="kw">use </span><span class="kw">crate</span>::readfiles::ReadFile;
 
 <span class="doccomment">/// A struct that can receive data from command line interface
@@ -175,8 +192,11 @@
     <span class="attr">#[arg(long = <span class="string">&quot;drive&quot;</span>, default_value = <span class="string">&quot;/mnt/update&quot;</span>)]
     </span>drive: String,
 
-    <span class="attr">#[arg(long = <span class="string">&quot;password&quot;</span>, default_value = <span class="string">&quot;12994393&quot;</span>)]
-    </span>password: String,
+    <span class="attr">#[arg(long = <span class="string">&quot;pid&quot;</span>, default_value = <span class="string">&quot;ffff&quot;</span>)]
+    </span>pid: String,
+
+    <span class="attr">#[arg(long = <span class="string">&quot;vid&quot;</span>, default_value = <span class="string">&quot;ffff&quot;</span>)]
+    </span>vid: String,
 }
 
 <span class="doccomment">/// Main code
@@ -236,13 +256,29 @@
     std::fs::copy(args.post_update_script_content_file.clone(),after_update_path_string.as_str()).unwrap();
     std::fs::copy(args.pre_update_script_content_file.clone(),before_update_path_string.as_str()).unwrap();
 
-    <span class="comment">/* Substring password field */
-    </span><span class="kw">let </span>verdor_id_str =  args.password.substring(<span class="number">0</span>,<span class="number">4</span>).clone();
-    <span class="kw">let </span>product_id_str = args.password.substring(<span class="number">4</span>, <span class="number">8</span>).clone();
-    <span class="macro">println!</span>(<span class="string">&quot;Verdor ID: {}, Product ID: {}&quot;</span>, verdor_id_str, product_id_str);
+    <span class="comment">/* Receive vid and pid hex value */
+    </span><span class="kw">let </span>_vid = u16::from_str_radix(<span class="kw-2">&amp;</span>args.vid, <span class="number">16</span>);
+    <span class="kw">let </span>_pid = u16::from_str_radix(<span class="kw-2">&amp;</span>args.pid, <span class="number">16</span>);
+
+    <span class="comment">/* Checkout of assigning value correct */
+    </span><span class="kw">let </span><span class="kw-2">mut </span>_vid_u16 = <span class="number">0</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>_pid_u16 = <span class="number">0</span>;
+    <span class="kw">match </span>_vid {
+        <span class="prelude-val">Ok</span>(_vid) =&gt; {_vid_u16 = _vid; <span class="macro">println!</span>(<span class="string">&quot;VID : {}&quot;</span>, _vid); }, <span class="comment">/* The VID will a decimal system digits in console */
+        </span><span class="prelude-val">Err</span>(e) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Error: {}&quot;</span>, e),  <span class="comment">/* If has error about typing VID will be informed */
+    </span>};
+
+    <span class="kw">match </span>_pid {
+        <span class="prelude-val">Ok</span>(_pid) =&gt; {_pid_u16 = _pid; <span class="macro">println!</span>(<span class="string">&quot;PID : {}&quot;</span>, _pid);}, <span class="comment">/* The PID will a decimal system digits in console */
+        </span><span class="prelude-val">Err</span>(e) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Error: {}&quot;</span>, e), <span class="comment">/* If has error about typing PID will be informed */
+    </span>};
+    <span class="comment">/* Make password of 7z file extraction */
+    </span><span class="kw">let </span><span class="kw-2">mut </span>password_str = String::new();
+    password_str.push_str(_vid_u16.to_string().as_str());
+    password_str.push_str(_pid_u16.to_string().as_str());
 
     <span class="comment">/* Make a 7z file via command */
-    </span>compress_7z::compress_file_with_password(<span class="string">&quot;encrypted_update&quot;</span>, <span class="string">&quot;encrypted_update.7z&quot;</span>, args.password.clone().as_str());
+    </span>compress_7z::compress_file_with_password(<span class="string">&quot;encrypted_update&quot;</span>, <span class="string">&quot;encrypted_update.7z&quot;</span>, <span class="kw-2">&amp;</span>password_str);
 
     <span class="comment">/* Reads 7z file before copying to USB-stick for recieving checksum SHA - 256 of this file */
     </span><span class="kw">let </span>_compressed_file = ReadFile::read_file(String::from(<span class="string">&quot;encrypted_update.7z&quot;</span>));
@@ -251,8 +287,8 @@
     {
         file_name: _compressed_file.clone().filename,
         checksum: _compressed_file.clone().checksum,
-        vendor_id: String::from(verdor_id_str),
-        product_id: String::from(product_id_str)
+        vendor_id: String::from(_vid_u16.to_string()),
+        product_id: String::from(_pid_u16.to_string())
     };
     
     <span class="comment">/* Write json file start_update.json */
