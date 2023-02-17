@@ -8,7 +8,6 @@ use std::{path::Path, borrow::Borrow};
 use std::fs::File;
 use std::io::prelude::*;
 use clap::Parser;
-use substring::Substring;
 use crate::readfiles::ReadFile;
 
 /// A struct that can receive data from command line interface
@@ -38,8 +37,11 @@ struct Args {
     #[arg(long = "drive", default_value = "/mnt/update")]
     drive: String,
 
-    #[arg(long = "password", default_value = "12994393")]
-    password: String,
+    #[arg(long = "pid", default_value = "ffff")]
+    pid: String,
+
+    #[arg(long = "vid", default_value = "ffff")]
+    vid: String,
 }
 
 /// Main code
@@ -99,13 +101,29 @@ fn main() {
     std::fs::copy(args.post_update_script_content_file.clone(),after_update_path_string.as_str()).unwrap();
     std::fs::copy(args.pre_update_script_content_file.clone(),before_update_path_string.as_str()).unwrap();
 
-    /* Substring password field */
-    let verdor_id_str =  args.password.substring(0,4).clone();
-    let product_id_str = args.password.substring(4, 8).clone();
-    println!("Verdor ID: {}, Product ID: {}", verdor_id_str, product_id_str);
+    /* Receive vid and pid hex value */
+    let _vid = u16::from_str_radix(&args.vid, 16);
+    let _pid = u16::from_str_radix(&args.pid, 16);
+
+    /* Checkout of assigning value correct */
+    let mut _vid_u16 = 0;
+    let mut _pid_u16 = 0;
+    match _vid {
+        Ok(_vid) => {_vid_u16 = _vid; println!("VID : {}", _vid); }, /* The VID will a decimal system digits in console */
+        Err(e) => println!("Error: {}", e),  /* If has error about typing VID will be informed */
+    };
+
+    match _pid {
+        Ok(_pid) => {_pid_u16 = _pid; println!("PID : {}", _pid);}, /* The PID will a decimal system digits in console */
+        Err(e) => println!("Error: {}", e), /* If has error about typing PID will be informed */
+    };
+    /* Make password of 7z file extraction */
+    let mut password_str = String::new();
+    password_str.push_str(_vid_u16.to_string().as_str());
+    password_str.push_str(_pid_u16.to_string().as_str());
 
     /* Make a 7z file via command */
-    compress_7z::compress_file_with_password("encrypted_update", "encrypted_update.7z", args.password.clone().as_str());
+    compress_7z::compress_file_with_password("encrypted_update", "encrypted_update.7z", &password_str);
 
     /* Reads 7z file before copying to USB-stick for recieving checksum SHA - 256 of this file */
     let _compressed_file = ReadFile::read_file(String::from("encrypted_update.7z"));
@@ -114,8 +132,8 @@ fn main() {
     {
         file_name: _compressed_file.clone().filename,
         checksum: _compressed_file.clone().checksum,
-        vendor_id: String::from(verdor_id_str),
-        product_id: String::from(product_id_str)
+        vendor_id: String::from(_vid_u16.to_string()),
+        product_id: String::from(_pid_u16.to_string())
     };
     
     /* Write json file start_update.json */
