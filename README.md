@@ -41,7 +41,7 @@ sudo chmod -R 777 drone_image_generator
 Example of usage
 
 ```
-./drone_image_generator --files-to-install=/home/linuxpc/Desktop/DroneImageGenerator/pielectricseagles --install-path=/usr/bin/ --files-to-install=/home/linuxpc/Desktop/DroneImageGenerator/config.ini --install-path=/etc/pielectricseagles/ --post-update-script-content-file=/home/linuxpc/Desktop/DroneImageGenerator/after.sh --pre-update-script-content-file=/home/linuxpc/Desktop/DroneImageGenerator/before.sh --drive=/media/linuxpc/DRONE --password=12345678
+./drone_image_generator --files-to-install=/home/linuxpc/Desktop/DroneImageGenerator/pielectricseagles --install-path=/usr/bin/ --files-to-install=/home/linuxpc/Desktop/DroneImageGenerator/config.ini --install-path=/etc/pielectricseagles/ --post-update-script-content-file=/home/linuxpc/Desktop/DroneImageGenerator/after.sh --pre-update-script-content-file=/home/linuxpc/Desktop/DroneImageGenerator/before.sh --drive=/media/linuxpc/DRONE --vid=1234 --pid=ff
 ```
 
 ``` drone_image_generator ``` is a binary file that will run this CLI application
@@ -56,7 +56,8 @@ Example of usage
 
 ```--drive=``` is a path of USB drive that will make a image to specific USB drive
 
-```--password=``` is a password installation zip file for identity device and vendor
+```--vid=``` is a verdor ID hexidecimal value (don't need to add 0x....)
+```--pid=``` is a product ID hexidecimal value (don't need to add 0x....)
 
 ## Troubleshooting
 
